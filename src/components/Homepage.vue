@@ -99,6 +99,7 @@ export default {
         function addLetter (letter) {
           dialogBox.innerHTML += letter
         }
+        
       }, 2000)
     },
     showOrHideDialInstruction: function (display) {
