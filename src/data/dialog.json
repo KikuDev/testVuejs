@@ -12,8 +12,13 @@
 		],
 		"say": [
 			"Say 'Hello'",
-			"Say 'next'",
+			"Say 'ok'",
 			"Say something"
 		]
+	},
+	"feelings": {
+		"good": "Excellent! So we can continue!",
+		"goodAndYou": "Super! Thanks for asking me, I'm fine too, as usual",
+		"bad": "eteeeee"
 	}
 }

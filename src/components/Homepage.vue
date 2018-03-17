@@ -15,7 +15,8 @@
 
 <script>
 /* eslint-disable */
-import json from './dialog.json'
+import axios from 'axios'
+import json from '../data/dialog.json'
 
 export default {
   name: 'Homepage',
@@ -76,7 +77,7 @@ export default {
         }, 1000)
       }, 2000)
     },
-    sayHello: function () {
+    sayHello: function (feeling) {
       let that = this
       setTimeout(function () {
         const dialogBoxContainer = document.getElementsByClassName('dialog-box')[0]
@@ -91,7 +92,7 @@ export default {
           if (counter === greetingHello.length) {
             clearInterval(timer)
             that.showOrHideDialInstruction(1)
-            that.callNextAction()
+            that.listenUserAction()
           }
         }, 100)
 
@@ -103,17 +104,18 @@ export default {
     showOrHideDialInstruction: function (display) {
       let that = this
       let actionTxT = document.getElementsByClassName('action')[0]
+      const dialogBoxContainer = document.getElementsByClassName('dialog-box')[0]
       that.microphoneActivated ? actionTxT.innerHTML = that.dialogAction.say[that.dialogStep] : actionTxT.innerHTML = that.dialogAction.press[that.dialogStep]
       if (display === 0) {
         actionTxT.style.transition = '.1s'
+        dialogBoxContainer.classList.remove('opened')
       } else {
         actionTxT.style.transition = '.8s'
       }
       actionTxT.style.opacity = display
     },
-    callNextAction: function () {
+    listenUserAction: function () {
       let that = this
-      const dialogBox = document.getElementById('dial-txt')
       let commands = {}
       if (that.microphoneActivated) {
         console.log(that.dialogStep)
@@ -121,21 +123,34 @@ export default {
           case 0:
             commands = {
               'hello': function () {
-                that.showOrHideDialInstruction(0)
-                dialogBox.innerHTML = ''
-                that.sayHello(that.dialogStep)
+                that.callNextAction()
               }
             }
             break;
           case 1:
             annyang.removeCommands();
             commands = {
-              'next': function () {
-                that.showOrHideDialInstruction(0)
-                dialogBox.innerHTML = ''
-                that.sayHello(that.dialogStep)
+              'ok': function () {
+                that.callNextAction()
               }
             }
+            break;
+          case 2:
+            annyang.removeCommands();
+            commands = {
+              '*sentence': function (sentence) {
+                console.log(sentence)
+                axios.get(`https://watson-api-explorer.mybluemix.net/tone-analyzer/api/v3/tone?text=${sentence}&version=2018-01-03&sentences=true&tones=emotion`)
+                  .then(function (response) {
+                      console.log(response);
+                      response.data.document_tone.tones["0"].tone_id === 'joy' ? that.callNextAction('good') : that.callNextAction('bad')
+                  })
+                  .catch(function (error) {
+                      console.log(error.message);
+                  });
+              }
+            }
+            break;
           default:
             break;
         }
@@ -144,15 +159,19 @@ export default {
       } else {
         let keyPressed = function (event) {
           if (event.keyCode === 13) {
-            that.showOrHideDialInstruction(0)
-            dialogBox.innerHTML = ''
-            that.sayHello(that.dialogStep)
+            that.callNextAction()
             document.removeEventListener('keydown', keyPressed)
           }
         }
         document.addEventListener('keydown', keyPressed)
       }
       that.dialogStep++
+    },
+    callNextAction: function (feeling) {
+      const dialogBox = document.getElementById('dial-txt')
+      this.showOrHideDialInstruction(0)
+      dialogBox.innerHTML = ''
+      this.sayHello(feeling)
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -207,7 +226,7 @@ export default {
     padding: 20px 40px;
     position: absolute;
     top: 40%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) scale(0);
     transition: 0.2s;
     min-width: 200px;
     max-width: 80%;
@@ -236,6 +255,7 @@ export default {
     }
     &.opened {
       display: flex;
+      transform: translateX(-50%) scale(1);
     }
   }
 

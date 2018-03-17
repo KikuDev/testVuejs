@@ -1,6 +1,6 @@
 <template>
   <li class="TeamMember">
-    <img src="../assets/seb2.png"/>
+
   </li>
 </template>
 
