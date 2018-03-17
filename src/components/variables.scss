@@ -1,0 +1,13 @@
+$theme-color: #262626;
+$white: #ffffff;
+$font-crono: cronoFont;
+
+
+
+@font-face {
+    font-family: cronoFont;
+    src: url("../assets/fonts/ChronoType.eot");
+    src: url("../assets/fonts/ChronoType.otf");
+    src: url("../assets/fonts/ChronoType.ttf");
+    src: url("../assets/fonts/ChronoType.woff");
+}

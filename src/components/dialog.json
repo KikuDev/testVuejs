@@ -1,0 +1,19 @@
+{
+	"greeting": [
+		"Hello visitor!",
+		"I'm Greg! Nice to meet you!",
+		"Before we begin, how are you feeling?"
+	],
+	"instructions": {
+		"press": [
+			"Press enter",
+			"Press enter",
+			"Press enter"
+		],
+		"say": [
+			"Say 'Hello'",
+			"Say 'next'",
+			"Say something"
+		]
+	}
+}
